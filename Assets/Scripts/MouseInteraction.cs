@@ -2,49 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MouseInteraction : MonoBehaviour
+namespace Assets.Scripts
 {
-    private Renderer rd;
-    private Rigidbody rb;
-    private bool isColorRed;
-
-    private void Start()
+    public class MouseInteraction : MonoBehaviour
     {
-        if (!TryGetComponent(out rd))
-        {
-            Debug.LogWarning("Missing renderer component.");
-        }
-        if (!TryGetComponent(out rb))
-        {
-            Debug.LogWarning("Missing Rigidbody component.");
-        }
-        Debug.Log("Hello World");
-        isColorRed = rd.material.color == Color.red;
-    }
+        private Renderer rd;
+        private Rigidbody rb;
+        private bool isColorRed;
 
-    private void OnMouseDown()
-    {
-        ChangeColor();
-        MakeGravityActive();
-    }
-
-    // Enable gravity
-    private void MakeGravityActive()
-    {
-        rb.useGravity = true;
-    }
-
-    // Change color of renderer's material
-    private void ChangeColor()
-    {
-        if (isColorRed)
+        private void Start()
         {
-            rd.material.color = Color.blue;
+            if (!TryGetComponent(out rd))
+            {
+                Debug.LogWarning("Missing renderer component.");
+            }
+            if (!TryGetComponent(out rb))
+            {
+                Debug.LogWarning("Missing Rigidbody component.");
+            }
+            Debug.Log("Hello World");
+            isColorRed = rd.material.color == Color.red;
         }
-        else
+
+        private void OnMouseDown()
         {
-            rd.material.color = Color.red;
+            ChangeColor();
+            MakeGravityActive();
         }
-        isColorRed = !isColorRed;
+
+        // Enable gravity
+        private void MakeGravityActive()
+        {
+            rb.useGravity = true;
+        }
+
+        // Change color of renderer's material
+        private void ChangeColor()
+        {
+            if (isColorRed)
+            {
+                rd.material.color = Color.blue;
+            }
+            else
+            {
+                rd.material.color = Color.red;
+            }
+            isColorRed = !isColorRed;
+        }
     }
 }
