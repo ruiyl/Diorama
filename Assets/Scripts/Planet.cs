@@ -15,8 +15,11 @@ namespace Assets.Scripts
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            MouseClickEvent?.Invoke(eventData.pointerPressRaycast.worldPosition);
+            if (Vector2.SqrMagnitude(eventData.position - eventData.pressPosition) > Constants.MOUSE_CLICK_SQ_OFFSET_LIMIT)
+            {
+                return;
+            }
+            MouseClickEvent?.Invoke(eventData.pointerCurrentRaycast.worldPosition);
         }
     }
 }
-
