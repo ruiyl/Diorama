@@ -11,7 +11,7 @@ namespace Assets.Scripts
     {
         [SerializeField] private Camera mainCam;
 
-        [HideInInspector] public UnityEvent<Vector3> MouseClickEvent;
+        [HideInInspector] public UnityEvent<PointerEventData.InputButton, Vector3> MouseClickEvent;
 
         public void OnPointerClick(PointerEventData eventData)
         {
@@ -19,7 +19,7 @@ namespace Assets.Scripts
             {
                 return;
             }
-            MouseClickEvent?.Invoke(eventData.pointerCurrentRaycast.worldPosition);
+            MouseClickEvent?.Invoke(eventData.button, eventData.pointerCurrentRaycast.worldPosition);
         }
     }
 }

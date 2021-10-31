@@ -1,13 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
-    public class Player : MonoBehaviour
+    public class Player : MonoBehaviour, IPointerClickHandler
     {
-        private void Awake()
+        public void OnPointerClick(PointerEventData eventData)
         {
+            
+        }
+
+        private void PlantTreeAt(Vector3 position)
+        {
+
         }
     }
 }
