@@ -7,11 +7,11 @@ namespace Assets.Scripts
     public class GameManager : MonoBehaviour
     {
         [SerializeField] private Planet planet;
-        [SerializeField] private PivotMovement pivotMovement;
+        [SerializeField] private Player player;
 
         private void Start()
         {
-            pivotMovement.SetMoveEvent(planet.MouseClickEvent);
+            player.SetInputEvent(planet.MouseClickEvent);
         }
     }
 }
