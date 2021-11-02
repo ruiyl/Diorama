@@ -11,13 +11,11 @@ namespace Assets.Scripts
         [SerializeField] private PivotMovement.MovementSetting movementSetting;
 
         private Animator animator;
-        private PivotMovement movement;        
+        private PivotMovement movement;
         private PlayerState currentState;
         private PlayerInput currentInput;
-        private Vector3 pressPosition;
-
         private PlantItem plantItem;
-        private bool hasBeginPlanting;
+        private bool hasBegunPlantingAnim;
 
         private enum PlayerState
         {
@@ -86,11 +84,11 @@ namespace Assets.Scripts
                     break;
                 case PointerEventData.InputButton.Right:
                     currentInput = PlayerInput.Plant;
+                    plantItem.SetPlantingPosition(moveToPosition);
                     break;
             }
             movement.MoveTo(moveToPosition, currentInput == PlayerInput.Plant);
             currentState = PlayerState.Moving;
-            pressPosition = moveToPosition;
         }
 
         private void ExitState()
@@ -104,7 +102,7 @@ namespace Assets.Scripts
                         currentState = PlayerState.Idle;
                         break;
                     case PlayerInput.Plant:
-                        PlantItemAt(pressPosition);
+                        EnterPlantingState();
                         break;
                 }
                 animator.SetFloat("Speed", movement.Speed);
@@ -117,22 +115,22 @@ namespace Assets.Scripts
             }
         }
 
-        private void PlantItemAt(Vector3 position)
+        private void EnterPlantingState()
         {
             currentState = PlayerState.Planting;
             animator.SetBool("IsPlanting", true);
-            plantItem.SetPlantingState(position, transform.rotation);
-            hasBeginPlanting = false;
+            plantItem.SetPlantingRotation(transform.rotation);
+            hasBegunPlantingAnim = false;
         }
 
         public void OnStartPlantAnim()
         {
-            if (hasBeginPlanting)
+            if (hasBegunPlantingAnim)
             {
                 return;
-            }            
+            }
             plantItem.BeginPlanting();
-            hasBeginPlanting = true;
+            hasBegunPlantingAnim = true;
         }
     }
 }

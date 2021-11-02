@@ -22,6 +22,7 @@ namespace Assets.Scripts
 
         public void StartGrowing(Transform item)
         {
+            transform.localScale = Vector3.zero;
             currentGrowingItem = item;
             animator.SetTrigger("Grow");
         }

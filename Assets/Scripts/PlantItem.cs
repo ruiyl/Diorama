@@ -8,13 +8,23 @@ namespace Assets.Scripts
     public class PlantItem : MonoBehaviour
     {
         [SerializeField] private ItemPlaceHolder placeHolder;
-        
+
         private List<Transform> itemPrefabs;
         private int currentPrefabIndex;
 
         public void SetPlantingState(Vector3 position, Quaternion rotation)
         {
             placeHolder.transform.SetPositionAndRotation(position, rotation);
+        }
+
+        public void SetPlantingPosition(Vector3 position)
+        {
+            placeHolder.transform.position = position;
+        }
+
+        public void SetPlantingRotation(Quaternion rotation)
+        {
+            placeHolder.transform.rotation = rotation;
         }
 
         public void BeginPlanting()
