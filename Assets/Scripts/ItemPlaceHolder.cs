@@ -28,7 +28,7 @@ namespace Assets.Scripts
 
         public void OnGrowEnd()
         {
-            currentGrowingItem.SetParent(null);
+            currentGrowingItem.SetParent(transform.parent);
             GrowEndEvent?.Invoke();
         }
     }

@@ -36,7 +36,7 @@ namespace Assets.Scripts
         {
             this.setting = setting;
             targetSurfaceRotation = this.setting.surfacePoint.localRotation;
-            targetPivotRotation = this.setting.pivot.rotation;
+            targetPivotRotation = this.setting.pivot.localRotation;
 
             radius = (this.setting.surfacePoint.position - this.setting.pivot.position).magnitude;
             plantingDestinationOffsetAngle = PLANTING_DESTINATION_OFFSET_LENGTH * ANGLE_IN_CIRCLE / (2f * Mathf.PI * radius);
@@ -51,10 +51,10 @@ namespace Assets.Scripts
 
             Vector3 targetOffset = stopBeforeDestination ? surfaceOffsetWorld.normalized * PLANTING_DESTINATION_OFFSET_LENGTH : Vector3.zero;
             Vector3 pivotNewDirection = setting.pivot.InverseTransformDirection(moveToPosition - setting.pivot.position).normalized;
-            targetPivotRotation = setting.pivot.rotation * Quaternion.FromToRotation(Vector3.up, pivotNewDirection);
+            targetPivotRotation = setting.pivot.localRotation * Quaternion.FromToRotation(Vector3.up, pivotNewDirection);
             if (stopBeforeDestination)
             {
-                targetPivotRotation = Quaternion.RotateTowards(targetPivotRotation, setting.pivot.rotation, -plantingDestinationOffsetAngle);
+                targetPivotRotation = Quaternion.RotateTowards(targetPivotRotation, setting.pivot.localRotation, -plantingDestinationOffsetAngle);
             }
             totalPivotAngleDiff = GetCurrentPivotAngleDiff();
         }
@@ -65,11 +65,11 @@ namespace Assets.Scripts
             {
                 setting.surfacePoint.localRotation = Quaternion.RotateTowards(setting.surfacePoint.localRotation, targetSurfaceRotation, setting.rotationSpeed * Time.deltaTime);
             }
-            else if (setting.pivot.rotation != targetPivotRotation)
+            else if (setting.pivot.localRotation != targetPivotRotation)
             {
                 float progress = GetCurrentPivotAngleDiff() / totalPivotAngleDiff;
                 float pivotAngularSpeed = CalculatePivotSpeed(progress);
-                setting.pivot.rotation = Quaternion.RotateTowards(setting.pivot.rotation, targetPivotRotation, pivotAngularSpeed * Time.deltaTime);
+                setting.pivot.localRotation = Quaternion.RotateTowards(setting.pivot.localRotation, targetPivotRotation, pivotAngularSpeed * Time.deltaTime);
                 Speed = setting.moveSpeedCurve.Evaluate(1f - progress);
             }
             else
@@ -86,7 +86,7 @@ namespace Assets.Scripts
 
         private float GetCurrentPivotAngleDiff()
         {
-            return Vector3.Angle(setting.pivot.rotation * Vector3.up, targetPivotRotation * Vector3.up);
+            return Vector3.Angle(setting.pivot.localRotation * Vector3.up, targetPivotRotation * Vector3.up);
         }
     }
 }

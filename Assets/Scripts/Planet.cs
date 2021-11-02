@@ -24,7 +24,7 @@ namespace Assets.Scripts
             }
             MouseClickEvent?.Invoke(eventData.button, eventData.pointerCurrentRaycast.worldPosition);
         }
-        
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             isPointerOver = true;
@@ -56,7 +56,13 @@ namespace Assets.Scripts
 
         private void PlaceCursorFx(Vector3 position)
         {
-            cursorFx.SetPositionAndRotation(position, Quaternion.FromToRotation(transform.up, (position - transform.position).normalized));
+            cursorFx.SetPositionAndRotation(position, Quaternion.FromToRotation(Vector3.up, (position - transform.position).normalized));
+        }
+
+        public void Rotate(float xDegree, float yDegree)
+        {
+            transform.RotateAround(transform.position, transform.position + Vector3.up, yDegree);
+            transform.RotateAround(transform.position, transform.position + Vector3.right, xDegree);
         }
     }
 }

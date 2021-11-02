@@ -7,10 +7,10 @@ namespace Assets.Scripts
 {
     public class CameraRotation : MonoBehaviour
     {
-        [SerializeField] private DragNotifier underlayDragNotifier;
-        [SerializeField] private DragNotifier planetDragNotifier;
+        [SerializeField] private DragNotifier[] dragNotifiers;
         [SerializeField] private Camera mainCam;
         [SerializeField] private Transform cameraPivot;
+        [SerializeField] private Planet planet;
         [SerializeField] private float minCamDistance;
         [SerializeField] private float maxCamDistance;
         [SerializeField] private float camZoomSpeed;
@@ -29,12 +29,12 @@ namespace Assets.Scripts
         private void Awake()
         {
             targetCamDistance = Mathf.Abs(mainCam.transform.localPosition.z);
-            underlayDragNotifier.BeginDragEvent += HandleBeginDrag;
-            underlayDragNotifier.DragEvent += HandleDrag;
-            underlayDragNotifier.EndDragEvent += HandleEndDrag;
-            planetDragNotifier.BeginDragEvent += HandleBeginDrag;
-            planetDragNotifier.DragEvent += HandleDrag;
-            planetDragNotifier.EndDragEvent += HandleEndDrag;
+            foreach (DragNotifier notifer in dragNotifiers)
+            {
+                notifer.BeginDragEvent += HandleBeginDrag;
+                notifer.DragEvent += HandleDrag;
+                notifer.EndDragEvent += HandleEndDrag;
+            }
         }
 
         private void Update()
@@ -83,8 +83,10 @@ namespace Assets.Scripts
 
         private void RotateCamera(Vector2 dragOffset, bool isDamping = false)
         {
-            Vector2 rotation = new Vector2(dragOffset.y * -SCREEN_TO_ROTATION_MULTIPLIER, dragOffset.x * SCREEN_TO_ROTATION_MULTIPLIER * Screen.width / Screen.height);
-            cameraPivot.Rotate(rotation.x, rotation.y, 0f);
+            Vector2 rotation = new Vector2(dragOffset.y * SCREEN_TO_ROTATION_MULTIPLIER, dragOffset.x * -SCREEN_TO_ROTATION_MULTIPLIER * Screen.width / Screen.height);
+            // cameraPivot.Rotate(rotation.x, rotation.y, 0f);
+            planet.transform.RotateAround(planet.transform.position, planet.transform.position + Vector3.up, rotation.y);
+            planet.transform.RotateAround(planet.transform.position, planet.transform.position + Vector3.right, rotation.x);
             if (!isDamping && dragOffset.magnitude > 0f)
             {
                 dampForce = dragOffset * SCREEN_TO_ROTATION_MULTIPLIER;
