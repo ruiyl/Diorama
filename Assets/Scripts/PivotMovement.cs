@@ -15,7 +15,9 @@ namespace Assets.Scripts
         private float radius;
         private float plantingDestinationOffsetAngle;
 
-        public event Action FinishMovement;
+        public float Speed { get; private set; }
+
+        public event UnityAction FinishMovement;
 
         private const float PLANTING_DESTINATION_OFFSET_LENGTH = -1f;
         private const float ANGLE_IN_CIRCLE = 360f;
@@ -65,11 +67,14 @@ namespace Assets.Scripts
             }
             else if (setting.pivot.rotation != targetPivotRotation)
             {
-                float pivotAngularSpeed = CalculatePivotSpeed(GetCurrentPivotAngleDiff() / totalPivotAngleDiff);
+                float progress = GetCurrentPivotAngleDiff() / totalPivotAngleDiff;
+                float pivotAngularSpeed = CalculatePivotSpeed(progress);
                 setting.pivot.rotation = Quaternion.RotateTowards(setting.pivot.rotation, targetPivotRotation, pivotAngularSpeed * Time.deltaTime);
+                Speed = setting.moveSpeedCurve.Evaluate(1f - progress);
             }
             else
             {
+                Speed = 0f;
                 FinishMovement?.Invoke();
             }
         }

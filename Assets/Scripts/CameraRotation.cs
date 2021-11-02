@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
     public class CameraRotation : MonoBehaviour
     {
+        [SerializeField] private DragNotifier underlayDragNotifier;
+        [SerializeField] private DragNotifier planetDragNotifier;
         [SerializeField] private Camera mainCam;
         [SerializeField] private Transform cameraPivot;
         [SerializeField] private float minCamDistance;
@@ -13,6 +16,7 @@ namespace Assets.Scripts
         [SerializeField] private float camZoomSpeed;
         [SerializeField] private int camZoomLevel;
 
+        private bool mouseState;
         private bool isDragging;
         private Vector2 lastDragPos;
         private Vector2 dampForce;
@@ -25,6 +29,12 @@ namespace Assets.Scripts
         private void Awake()
         {
             targetCamDistance = Mathf.Abs(mainCam.transform.localPosition.z);
+            underlayDragNotifier.BeginDragEvent += HandleBeginDrag;
+            underlayDragNotifier.DragEvent += HandleDrag;
+            underlayDragNotifier.EndDragEvent += HandleEndDrag;
+            planetDragNotifier.BeginDragEvent += HandleBeginDrag;
+            planetDragNotifier.DragEvent += HandleDrag;
+            planetDragNotifier.EndDragEvent += HandleEndDrag;
         }
 
         private void Update()
@@ -33,32 +43,33 @@ namespace Assets.Scripts
             UpdateZoom();
         }
 
+        private void HandleBeginDrag(PointerEventData eventData)
+        {
+            isDragging = true;
+            lastDragPos = ConvertSceenPositionToViewPortPosition(eventData.position);
+            Cursor.visible = false;
+        }
+
+        private void HandleDrag(PointerEventData eventData)
+        {
+            Vector2 currentMousePos = ConvertSceenPositionToViewPortPosition(eventData.position);
+            RotateCamera(currentMousePos - lastDragPos);
+            lastDragPos = currentMousePos;
+        }
+
+        private void HandleEndDrag(PointerEventData eventData)
+        {
+            isDragging = false;
+            Cursor.visible = true;
+        }
+
         private void UpdateRotation()
         {
-            bool mouseState = Input.GetMouseButton(0);
-            if (mouseState)
+            if (!isDragging && dampForce.magnitude > 0.1f)
             {
-                if (isDragging)
-                {
-                    RotateCamera(ConvertSceenPositionToViewPortPosition(Input.mousePosition) - lastDragPos);
-                }
-                else
-                {
-                    isDragging = true;
-                    Cursor.visible = false;
-                }
-                lastDragPos = ConvertSceenPositionToViewPortPosition(Input.mousePosition);
+                RotateCamera(dampForce * Time.deltaTime, true);
+                dampForce *= 0.95f;
             }
-            else
-            {
-                Cursor.visible = true;
-                isDragging = false;
-                if (dampForce.magnitude > 0.1f)
-                {
-                    RotateCamera(dampForce * Time.deltaTime, true);
-                }
-            }
-            dampForce *= 0.95f;
         }
 
         private void UpdateZoom()

@@ -10,10 +10,14 @@ namespace Assets.Scripts
     {
         [SerializeField] private PivotMovement.MovementSetting movementSetting;
 
+        private Animator animator;
         private PivotMovement movement;        
         private PlayerState currentState;
         private PlayerInput currentInput;
         private Vector3 pressPosition;
+
+        private PlantItem plantItem;
+        private bool hasBeginPlanting;
 
         private enum PlayerState
         {
@@ -34,6 +38,21 @@ namespace Assets.Scripts
             currentState = PlayerState.Idle;
             movement = new PivotMovement(movementSetting);
             movement.FinishMovement += ExitState;
+
+            if (TryGetComponent(out plantItem))
+            {
+                UnityEvent growEndEvent = plantItem.GetGrowEndEvent();
+                growEndEvent.AddListener(ExitState);
+            }
+            else
+            {
+                Debug.LogWarning("Missing PlantItem");
+            }
+
+            if (!TryGetComponent(out animator))
+            {
+                Debug.LogWarning("Missing Animator");
+            }
         }
 
         public void SetInputEvent(UnityEvent<PointerEventData.InputButton, Vector3> moveEvent)
@@ -49,15 +68,17 @@ namespace Assets.Scripts
                     return;
                 case PlayerState.Moving:
                     movement.UpdateMove();
-                    return;
-                case PlayerState.Planting:
-                    //UpdatePlant();
+                    animator.SetFloat("Speed", movement.Speed);
                     return;
             }
         }
 
         private void ProcessInput(PointerEventData.InputButton input, Vector3 moveToPosition)
         {
+            if (currentState == PlayerState.Planting)
+            {
+                return;
+            }
             switch (input)
             {
                 case PointerEventData.InputButton.Left:
@@ -83,20 +104,35 @@ namespace Assets.Scripts
                         currentState = PlayerState.Idle;
                         break;
                     case PlayerInput.Plant:
-                        PlantTreeAt(pressPosition);
+                        PlantItemAt(pressPosition);
                         break;
                 }
+                animator.SetFloat("Speed", movement.Speed);
             }
             else if (currentState == PlayerState.Planting)
             {
                 currentInput = PlayerInput.None;
                 currentState = PlayerState.Idle;
+                animator.SetBool("IsPlanting", false);
             }
         }
 
-        private void PlantTreeAt(Vector3 position)
+        private void PlantItemAt(Vector3 position)
         {
             currentState = PlayerState.Planting;
+            animator.SetBool("IsPlanting", true);
+            plantItem.SetPlantingState(position, transform.rotation);
+            hasBeginPlanting = false;
+        }
+
+        public void OnStartPlantAnim()
+        {
+            if (hasBeginPlanting)
+            {
+                return;
+            }            
+            plantItem.BeginPlanting();
+            hasBeginPlanting = true;
         }
     }
 }
