@@ -9,7 +9,6 @@ namespace Assets.Scripts
     {
         [SerializeField] private DragNotifier[] dragNotifiers;
         [SerializeField] private Camera mainCam;
-        [SerializeField] private Transform cameraPivot;
         [SerializeField] private Planet planet;
         [SerializeField] private float minCamDistance;
         [SerializeField] private float maxCamDistance;
@@ -84,9 +83,7 @@ namespace Assets.Scripts
         private void RotateCamera(Vector2 dragOffset, bool isDamping = false)
         {
             Vector2 rotation = new Vector2(dragOffset.y * SCREEN_TO_ROTATION_MULTIPLIER, dragOffset.x * -SCREEN_TO_ROTATION_MULTIPLIER * Screen.width / Screen.height);
-            // cameraPivot.Rotate(rotation.x, rotation.y, 0f);
-            planet.transform.RotateAround(planet.transform.position, planet.transform.position + Vector3.up, rotation.y);
-            planet.transform.RotateAround(planet.transform.position, planet.transform.position + Vector3.right, rotation.x);
+            planet.Rotate(rotation.x, rotation.y);
             if (!isDamping && dragOffset.magnitude > 0f)
             {
                 dampForce = dragOffset * SCREEN_TO_ROTATION_MULTIPLIER;
