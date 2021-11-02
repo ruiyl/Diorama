@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
-    public class Player : MonoBehaviour
+    public class Player : MonoBehaviour // Keep and update Player's state
     {
         [SerializeField] private PivotMovement.MovementSetting movementSetting;
 
@@ -34,12 +34,12 @@ namespace Assets.Scripts
         private void Awake()
         {
             currentState = PlayerState.Idle;
-            movement = new PivotMovement(movementSetting);
-            movement.FinishMovement += ExitState;
+            movement = new PivotMovement(movementSetting); // Create movement class instance
+            movement.FinishMovement += ExitState; // Look out for state exit condition
 
             if (TryGetComponent(out plantItem))
             {
-                UnityEvent growEndEvent = plantItem.GetGrowEndEvent();
+                UnityEvent growEndEvent = plantItem.GetGrowEndEvent(); // Look out for state exit condition
                 growEndEvent.AddListener(ExitState);
             }
             else
@@ -58,7 +58,7 @@ namespace Assets.Scripts
             moveEvent.AddListener(ProcessInput);
         }
 
-        private void Update()
+        private void Update() // Update state handler and calculate speed for animation
         {
             switch (currentState)
             {
@@ -71,7 +71,7 @@ namespace Assets.Scripts
             }
         }
 
-        private void ProcessInput(PointerEventData.InputButton input, Vector3 moveToPosition)
+        private void ProcessInput(PointerEventData.InputButton input, Vector3 moveToPosition) // Read input to enter corresponding state
         {
             if (currentState == PlayerState.Planting)
             {
@@ -84,30 +84,30 @@ namespace Assets.Scripts
                     break;
                 case PointerEventData.InputButton.Right:
                     currentInput = PlayerInput.Plant;
-                    plantItem.SetPlantingPosition(moveToPosition);
+                    plantItem.SetPlantingPosition(moveToPosition); // Set position early so that the PlaceHolder land on the correct place in case the Planet rotate
                     break;
             }
-            movement.MoveTo(moveToPosition, currentInput == PlayerInput.Plant);
+            movement.MoveTo(moveToPosition, currentInput == PlayerInput.Plant); // If planting, stop the player before the destination
             currentState = PlayerState.Moving;
         }
 
-        private void ExitState()
+        private void ExitState() // Exit from current state to the corresponding next state
         {
             if (currentState == PlayerState.Moving)
             {
                 switch (currentInput)
                 {
-                    case PlayerInput.Move:
+                    case PlayerInput.Move: // Stop at the destination
                         currentInput = PlayerInput.None;
                         currentState = PlayerState.Idle;
                         break;
-                    case PlayerInput.Plant:
+                    case PlayerInput.Plant: // Plant at the destination
                         EnterPlantingState();
                         break;
                 }
                 animator.SetFloat("Speed", movement.Speed);
             }
-            else if (currentState == PlayerState.Planting)
+            else if (currentState == PlayerState.Planting) // Stop after planting
             {
                 currentInput = PlayerInput.None;
                 currentState = PlayerState.Idle;
@@ -115,7 +115,7 @@ namespace Assets.Scripts
             }
         }
 
-        private void EnterPlantingState()
+        private void EnterPlantingState() // Start planting at the destination
         {
             currentState = PlayerState.Planting;
             animator.SetBool("IsPlanting", true);
@@ -123,7 +123,7 @@ namespace Assets.Scripts
             hasBegunPlantingAnim = false;
         }
 
-        public void OnStartPlantAnim()
+        public void OnStartPlantAnim() // Called by the AnimationEvent. Start growing item when the player finish transition from the last animation state
         {
             if (hasBegunPlantingAnim)
             {

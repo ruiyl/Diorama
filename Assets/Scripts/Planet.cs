@@ -18,11 +18,11 @@ namespace Assets.Scripts
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (Vector2.SqrMagnitude(eventData.position - eventData.pressPosition) > EventSystem.current.pixelDragThreshold)
+            if (Vector2.SqrMagnitude(eventData.position - eventData.pressPosition) > EventSystem.current.pixelDragThreshold) // Prevent clicking event from going off when the player finish dragging mouse
             {
                 return;
             }
-            MouseClickEvent?.Invoke(eventData.button, eventData.pointerCurrentRaycast.worldPosition);
+            MouseClickEvent?.Invoke(eventData.button, eventData.pointerCurrentRaycast.worldPosition); // Notify the Player
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -30,7 +30,7 @@ namespace Assets.Scripts
             isPointerOver = true;
         }
 
-        public void OnPointerExit(PointerEventData eventData)
+        public void OnPointerExit(PointerEventData eventData) // Hide cursor effect when mouse is not on the planet
         {
             isPointerOver = false;
             cursorFx.gameObject.SetActive(false);
@@ -42,7 +42,7 @@ namespace Assets.Scripts
             {
                 return;
             }
-            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
+            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition); // Calculate where the mouse hit the planet
             if (Physics.Raycast(ray, out RaycastHit hitInfo) && hitInfo.transform == transform)
             {
                 cursorFx.gameObject.SetActive(true);
@@ -54,12 +54,12 @@ namespace Assets.Scripts
             }
         }
 
-        private void PlaceCursorFx(Vector3 position)
+        private void PlaceCursorFx(Vector3 position) // place and orientate the cursor effect
         {
             cursorFx.SetPositionAndRotation(position, Quaternion.FromToRotation(Vector3.up, (position - transform.position).normalized));
         }
 
-        public void Rotate(float xDegree, float yDegree)
+        public void Rotate(float xDegree, float yDegree) // Rotate the planet
         {
             transform.RotateAround(transform.position, transform.position + Vector3.up, yDegree);
             transform.RotateAround(transform.position, transform.position + Vector3.right, xDegree);

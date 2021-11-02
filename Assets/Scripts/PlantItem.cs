@@ -12,11 +12,6 @@ namespace Assets.Scripts
         private List<Transform> itemPrefabs;
         private int currentPrefabIndex;
 
-        public void SetPlantingState(Vector3 position, Quaternion rotation)
-        {
-            placeHolder.transform.SetPositionAndRotation(position, rotation);
-        }
-
         public void SetPlantingPosition(Vector3 position)
         {
             placeHolder.transform.position = position;
@@ -27,7 +22,7 @@ namespace Assets.Scripts
             placeHolder.transform.rotation = rotation;
         }
 
-        public void BeginPlanting()
+        public void BeginPlanting() // Instantiate item as the PlaceHolder's child and trigger growing animation
         {
             Transform newItem = Instantiate(itemPrefabs[currentPrefabIndex], placeHolder.transform);
             newItem.SetPositionAndRotation(placeHolder.transform.position, placeHolder.transform.rotation);

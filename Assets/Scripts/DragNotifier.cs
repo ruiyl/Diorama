@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
-    public class DragNotifier : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class DragNotifier : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler // Class that notifies when player is dragging on the attached object
     {
         public event UnityAction<PointerEventData> BeginDragEvent;
         public event UnityAction<PointerEventData> DragEvent;

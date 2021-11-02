@@ -7,7 +7,7 @@ namespace Assets.Scripts
     {
         public void StartBtn()
         {
-            SceneManager.LoadScene(Constants.MAIN_SCENE_INDEX);
+            SceneManager.LoadScene(Constants.MAIN_SCENE_INDEX); // Load Main Scene
         }
 
         public void QuitBtn()
@@ -18,7 +18,7 @@ namespace Assets.Scripts
 
         public void BackBtn()
         {
-            SceneManager.LoadScene(Constants.MENU_SCENE_INDEX);
+            SceneManager.LoadScene(Constants.MENU_SCENE_INDEX); // Load Menu scene
         }
     }
 }

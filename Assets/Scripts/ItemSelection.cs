@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace Assets.Scripts
 {
-    public class ItemSelection : MonoBehaviour
+    public class ItemSelection : MonoBehaviour // UI script for changing items
     {
         private List<GameObject> demoItems;
         private int currentItemIndex;
@@ -17,7 +17,7 @@ namespace Assets.Scripts
             demoItems = itemDemoList;
         }
 
-        private void Start()
+        private void Start() // Hide all item, then show the first equipped item.
         {
             foreach (GameObject item in demoItems)
             {
@@ -26,20 +26,20 @@ namespace Assets.Scripts
             ShowNextItem(0, 0);
         }
 
-        private void ShowNextItem(int currentItem, int nextItem)
+        private void ShowNextItem(int currentItem, int nextItem) // Hide current item, then show the next item.
         {
             demoItems[currentItem].SetActive(false);
             demoItems[nextItem].SetActive(true);
 
-            ScrollItemEvent?.Invoke(nextItem);
+            ScrollItemEvent?.Invoke(nextItem); // Trigger event for PlantItem to change its prefab.
         }
 
-        public void ScrollLeft()
+        public void ScrollLeft() // Scroll left. Cycle to the last if reach 0
         {
             ShowNextItem(currentItemIndex, --currentItemIndex < 0 ? currentItemIndex += demoItems.Count : currentItemIndex);
         }
 
-        public void ScrollRight()
+        public void ScrollRight() // Scroll right. Cycle to the first if reach capacity
         {
             ShowNextItem(currentItemIndex, ++currentItemIndex >= demoItems.Count ? currentItemIndex %= demoItems.Count : currentItemIndex);
         }
