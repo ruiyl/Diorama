@@ -7,8 +7,6 @@ namespace Assets.Scripts
 {
     public class ItemSelection : MonoBehaviour
     {
-        [SerializeField] private RenderTexture texture;
-
         private List<GameObject> demoItems;
         private int currentItemIndex;
 
@@ -26,11 +24,6 @@ namespace Assets.Scripts
                 item.SetActive(false);
             }
             ShowNextItem(0, 0);
-        }
-
-        private void Update()
-        {
-            texture.Release();
         }
 
         private void ShowNextItem(int currentItem, int nextItem)
